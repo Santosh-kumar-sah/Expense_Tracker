@@ -8,6 +8,8 @@ const sanitizeUser = (user) => ({
   name: user.name,
   email: user.email,
   monthlyBudget: user.monthlyBudget,
+  householdId: user.householdId || null,
+  role: user.role || null,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
 });
@@ -32,6 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password: hashedPassword,
+    role: 'member',
   });
 
   generateToken(res, user._id);

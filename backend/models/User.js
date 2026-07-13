@@ -31,6 +31,17 @@ const userSchema = new mongoose.Schema(
       default: 0,
       min: [0, 'Budget cannot be negative'],
     },
+    householdId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Household',
+      default: null,
+      index: true,
+    },
+    role: {
+      type: String,
+      enum: ['owner', 'member'],
+      default: null,
+    },
   },
   {
     timestamps: true,

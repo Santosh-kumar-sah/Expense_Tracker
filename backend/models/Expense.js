@@ -8,6 +8,12 @@ const expenseSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    householdId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Household',
+      default: null,
+      index: true,
+    },
     amount: {
       type: Number,
       required: [true, 'Amount is required'],
@@ -40,5 +46,7 @@ const expenseSchema = new mongoose.Schema(
 
 expenseSchema.index({ userId: 1, date: -1 });
 expenseSchema.index({ userId: 1, category: 1 });
+expenseSchema.index({ householdId: 1, date: -1 });
+expenseSchema.index({ householdId: 1, category: 1 });
 
 module.exports = mongoose.model('Expense', expenseSchema);

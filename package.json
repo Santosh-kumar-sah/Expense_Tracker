@@ -8,5 +8,8 @@
   "scripts": {
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev"
+  },
+  "dependencies": {
+    "framer-motion": "^12.42.2"
   }
 }
