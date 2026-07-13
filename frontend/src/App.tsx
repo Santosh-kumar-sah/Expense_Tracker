@@ -4,8 +4,10 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import { Dashboard } from './pages/Dashboard';
 import { Expenses } from './pages/Expenses';
+import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { Family } from './pages/Family';
 
 export const App = (): JSX.Element => {
   const { user, loading } = useAuth();
@@ -16,7 +18,7 @@ export const App = (): JSX.Element => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
+      <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Home />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
       <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Signup />} />
       <Route
@@ -28,8 +30,9 @@ export const App = (): JSX.Element => {
       >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/expenses" element={<Expenses />} />
+        <Route path="/family" element={<Family />} />
       </Route>
-      <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
+      <Route path="*" element={<Navigate to={user ? '/dashboard' : '/'} replace />} />
     </Routes>
   );
 };

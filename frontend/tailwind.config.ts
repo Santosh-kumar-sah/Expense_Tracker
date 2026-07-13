@@ -6,8 +6,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#3d68f5',
-        accent: '#14b8a6',
+        primary: '#0F172A',
+        accent: '#059669',
+        highlight: '#D97706',
+        surface: '#F8FAFC',
+        ink: '#0B1120',
+        alert: {
+          under: '#059669',
+          nearing: '#D97706',
+          exceeded: '#DC2626',
+        },
       },
       boxShadow: {
         card: '0 10px 30px rgba(15, 23, 42, 0.08)',
@@ -22,7 +30,7 @@ export default {
         fadeUp: 'fadeUp 0.35s ease-out both',
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },

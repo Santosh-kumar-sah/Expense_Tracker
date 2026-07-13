@@ -1,5 +1,8 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import type {
+  AIChatPayload,
+  AIChatResponse,
+  AIInsightResponse,
   AnalyticsResponse,
   ApiResponse,
   AuthResponse,
@@ -8,6 +11,9 @@ import type {
   ExpenseFilters,
   ExpenseListResponse,
   ExpensePayload,
+  Household,
+  HouseholdPayload,
+  HouseholdUpdatePayload,
   LoginPayload,
   MeResponse,
   RegisterPayload,
@@ -57,13 +63,15 @@ export const updateBudget = async (payload: BudgetPayload): Promise<MeResponse> 
 export const getExpenses = async (
   filters: ExpenseFilters,
   page: number,
-  limit: number
+  limit: number,
+  scope: 'personal' | 'household' = 'personal'
 ): Promise<ExpenseListResponse> => {
   const response = await api.get<ExpenseListResponse>('/expenses', {
     params: {
       ...filters,
       page,
       limit,
+      scope: scope === 'household' ? 'household' : 'personal',
     },
   });
   return response.data;
@@ -84,8 +92,47 @@ export const deleteExpense = async (expenseId: string): Promise<ApiResponse<null
   return response.data;
 };
 
-export const getAnalytics = async (): Promise<AnalyticsResponse> => {
-  const response = await api.get<AnalyticsResponse>('/expenses/analytics');
+export const getAnalytics = async (scope: 'personal' | 'household' = 'personal'): Promise<AnalyticsResponse> => {
+  const response = await api.get<AnalyticsResponse>('/expenses/analytics', {
+    params: {
+      scope: scope === 'household' ? 'household' : 'personal',
+    },
+  });
+  return response.data;
+};
+
+export const getHousehold = async (): Promise<Household | null> => {
+  const response = await api.get<Household | null>('/households/me');
+  return response.data;
+};
+
+export const createHousehold = async (payload: HouseholdPayload): Promise<Household> => {
+  const response = await api.post<Household>('/households', payload);
+  return response.data;
+};
+
+export const joinHousehold = async (inviteCode: string): Promise<Household> => {
+  const response = await api.post<Household>('/households/join', { inviteCode });
+  return response.data;
+};
+
+export const updateHouseholdBudgets = async (payload: HouseholdUpdatePayload): Promise<Household> => {
+  const response = await api.put<Household>('/households/budgets', payload);
+  return response.data;
+};
+
+export const sendAiChat = async (payload: AIChatPayload): Promise<AIChatResponse> => {
+  const response = await api.post<AIChatResponse>('/ai/chat', payload);
+  return response.data;
+};
+
+export const getAiInsights = async (): Promise<AIInsightResponse> => {
+  const response = await api.get<AIInsightResponse>('/ai/insights');
+  return response.data;
+};
+
+export const refreshAiInsights = async (): Promise<AIInsightResponse> => {
+  const response = await api.post<AIInsightResponse>('/ai/insights/refresh');
   return response.data;
 };
 
