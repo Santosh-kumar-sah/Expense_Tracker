@@ -15,6 +15,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.2",
+    "react-parallax-tilt": "^1.7.333",
     "react-router-dom": "^6.30.1",
     "recharts": "^3.1.2"
   },
