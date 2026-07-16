@@ -4,18 +4,50 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────
+   CSS CUSTOM PROPERTIES
+───────────────────────────────────────────── */
 :root {
   color-scheme: light;
   --app-bg: #f8fafc;
   --app-fg: #0f172a;
+
+  /* Glass – light mode */
+  --glass-bg: rgba(255, 255, 255, 0.60);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.40);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-border-subtle: rgba(148, 163, 184, 0.20);
+  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.80);
+  --glass-shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.80);
+
+  /* Ambient blobs – light mode */
+  --blob-a: rgba(5, 150, 105, 0.10);
+  --blob-b: rgba(217, 119, 6, 0.07);
+  --blob-c: rgba(99, 102, 241, 0.06);
 }
 
 html.dark {
   color-scheme: dark;
   --app-bg: #0b1120;
   --app-fg: #e2e8f0;
+
+  /* Glass – dark mode */
+  --glass-bg: rgba(15, 23, 42, 0.55);
+  --glass-bg-subtle: rgba(15, 23, 42, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-subtle: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --glass-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Ambient blobs – dark mode */
+  --blob-a: rgba(5, 150, 105, 0.18);
+  --blob-b: rgba(217, 119, 6, 0.10);
+  --blob-c: rgba(99, 102, 241, 0.10);
 }
 
+/* ─────────────────────────────────────────────
+   BASE
+───────────────────────────────────────────── */
 body {
   @apply bg-slate-50 font-sans text-slate-900 antialiased dark:bg-slate-950 dark:text-white;
   background: var(--app-bg);
@@ -37,10 +69,299 @@ textarea {
   @apply outline-none;
 }
 
+/* ─────────────────────────────────────────────
+   LANDING SHELL (3D book-scroll perspective)
+───────────────────────────────────────────── */
 .landing-shell {
   perspective: 1400px;
 }
 
 .landing-page-section {
   transform-style: preserve-3d;
+}
+
+/* ─────────────────────────────────────────────
+   GLASSMORPHISM SYSTEM
+───────────────────────────────────────────── */
+
+/* Full glass panel — stat cards, modals, feature cards */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Subtle glass — sidebar, navbar, secondary surfaces */
+.glass-panel-subtle {
+  background: var(--glass-bg-subtle);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Large glass — modals with strong depth */
+.glass-panel-lg {
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-lg);
+}
+
+/* Glass button — primary CTAs */
+.glass-button {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.90) 0%, rgba(4, 120, 87, 0.95) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.glass-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.glass-button:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Ghost glass button — secondary CTAs on dark backgrounds */
+.glass-button-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.glass-button-ghost:hover {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
+
+/* ─────────────────────────────────────────────
+   3D TILT WRAPPER
+───────────────────────────────────────────── */
+.tilt-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-card-inner {
+  transform-style: preserve-3d;
+}
+
+.tilt-depth-1 { transform: translateZ(6px); }
+.tilt-depth-2 { transform: translateZ(12px); }
+.tilt-depth-3 { transform: translateZ(18px); }
+
+/* ─────────────────────────────────────────────
+   AMBIENT BACKGROUND BLOBS
+───────────────────────────────────────────── */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+}
+
+.ambient-blob-a {
+  width: 600px;
+  height: 600px;
+  top: -10%;
+  right: -5%;
+  background: var(--blob-a);
+  animation: blob-drift-a 45s ease-in-out infinite;
+}
+
+.ambient-blob-b {
+  width: 500px;
+  height: 500px;
+  bottom: 10%;
+  left: -8%;
+  background: var(--blob-b);
+  animation: blob-drift-b 55s ease-in-out infinite;
+}
+
+.ambient-blob-c {
+  width: 400px;
+  height: 400px;
+  top: 40%;
+  left: 40%;
+  background: var(--blob-c);
+  animation: blob-drift-c 65s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   LIQUID BLOB MORPHING (landing page hero)
+───────────────────────────────────────────── */
+.liquid-blob {
+  will-change: transform, border-radius;
+  animation: liquid-morph 12s ease-in-out infinite;
+}
+
+.liquid-blob-b {
+  animation: liquid-morph-b 16s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+.liquid-blob-c {
+  animation: liquid-morph-c 20s ease-in-out infinite;
+  animation-delay: -10s;
+}
+
+/* ─────────────────────────────────────────────
+   LIQUID FILL PROGRESS BAR
+───────────────────────────────────────────── */
+.liquid-fill-bar {
+  position: relative;
+  overflow: hidden;
+  border-radius: 99px;
+}
+
+.liquid-fill-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: shimmer-wave 2.5s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+/* ─────────────────────────────────────────────
+   LIQUID BLOB LOADER (AI states)
+───────────────────────────────────────────── */
+.blob-loader {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  animation: blob-squish 1.6s ease-in-out infinite;
+  background: linear-gradient(135deg, #059669, #047857);
+  will-change: border-radius, transform;
+}
+
+/* ─────────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────────── */
+
+/* Original fade-up */
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Ambient blob drifts — pure transform, GPU safe */
+@keyframes blob-drift-a {
+  0%, 100% { transform: translate(0px,   0px)   scale(1); }
+  33%       { transform: translate(30px,  -50px) scale(1.05); }
+  66%       { transform: translate(-20px, 30px)  scale(0.95); }
+}
+
+@keyframes blob-drift-b {
+  0%, 100% { transform: translate(0px,   0px)   scale(1); }
+  33%       { transform: translate(-40px, 60px)  scale(1.08); }
+  66%       { transform: translate(50px,  -20px) scale(0.92); }
+}
+
+@keyframes blob-drift-c {
+  0%, 100% { transform: translate(0px,   0px)   scale(1); }
+  50%       { transform: translate(60px,  -40px) scale(1.12); }
+}
+
+/* Liquid blob morphing — border-radius keyframes, GPU safe */
+@keyframes liquid-morph {
+  0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(0,0) scale(1); }
+  25%     { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: translate(20px,-15px) scale(1.03); }
+  50%     { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; transform: translate(-10px, 20px) scale(0.97); }
+  75%     { border-radius: 40% 60% 70% 30% / 60% 40% 60% 50%; transform: translate(15px, 10px) scale(1.02); }
+}
+
+@keyframes liquid-morph-b {
+  0%,100% { border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%; transform: translate(0,0) scale(1); }
+  33%     { border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%; transform: translate(-20px, 30px) scale(1.04); }
+  66%     { border-radius: 30% 70% 40% 60% / 50% 40% 60% 50%; transform: translate(25px,-10px) scale(0.96); }
+}
+
+@keyframes liquid-morph-c {
+  0%,100% { border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%; transform: translate(0,0) scale(1); }
+  50%     { border-radius: 60% 40% 60% 40% / 60% 40% 60% 40%; transform: translate(15px, -25px) scale(1.06); }
+}
+
+/* Shimmer / liquid fill wave */
+@keyframes shimmer-wave {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Blob loader squish/stretch */
+@keyframes blob-squish {
+  0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: scale(1); }
+  25%     { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: scale(1.1, 0.9); }
+  50%     { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; transform: scale(0.9, 1.1); }
+  75%     { border-radius: 40% 60% 70% 30% / 60% 40% 60% 50%; transform: scale(1.05, 0.95); }
+}
+
+/* Modal 3D entrance helper */
+@keyframes modal-rise {
+  0%   { opacity: 0; transform: perspective(800px) scale(0.94) rotateX(8deg) translateY(10px); }
+  100% { opacity: 1; transform: perspective(800px) scale(1)    rotateX(0deg) translateY(0px); }
+}
+
+/* Wave divider pulse */
+@keyframes wave-pulse {
+  0%, 100% { d: path("M0,24 C200,0 400,48 600,24 C800,0 1000,48 1200,24 L1200,48 L0,48 Z"); }
+  50%       { d: path("M0,24 C200,48 400,0 600,24 C800,48 1000,0 1200,24 L1200,48 L0,48 Z"); }
+}
+
+/* ─────────────────────────────────────────────
+   ANIMATION UTILITIES
+───────────────────────────────────────────── */
+.animate-fadeUp    { animation: fadeUp 0.35s ease-out both; }
+.animate-modal-rise { animation: modal-rise 0.40s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ─────────────────────────────────────────────
+   REDUCED MOTION OVERRIDES
+   Per spec: disable all animation, use simple opacity/translate
+───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ambient-blob,
+  .liquid-blob,
+  .liquid-blob-b,
+  .liquid-blob-c,
+  .blob-loader {
+    animation: none !important;
+  }
+
+  .liquid-fill-bar::after {
+    display: none;
+  }
+
+  .tilt-card {
+    transform: none !important;
+  }
+
+  .animate-modal-rise {
+    animation: fadeUp 0.2s ease-out both !important;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
 }
