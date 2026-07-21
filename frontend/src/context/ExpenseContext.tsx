@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import toast from 'react-hot-toast';
+import { useAuth } from './AuthContext';
 import {
   createExpense as createExpenseRequest,
   deleteExpense as deleteExpenseRequest,
@@ -31,6 +32,7 @@ interface ExpenseProviderProps {
 }
 
 export const ExpenseProvider = ({ children }: ExpenseProviderProps): JSX.Element => {
+  const { user } = useAuth();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [aiInsight, setAiInsight] = useState<AIInsight | null>(null);
@@ -41,6 +43,7 @@ export const ExpenseProvider = ({ children }: ExpenseProviderProps): JSX.Element
   const [loading, setLoading] = useState<boolean>(false);
 
   const refreshExpenses = async (): Promise<void> => {
+    if (!user) return;
     setLoading(true);
     try {
       const response = await getExpenses(filters, pagination.page, pagination.limit, scope);
@@ -51,26 +54,44 @@ export const ExpenseProvider = ({ children }: ExpenseProviderProps): JSX.Element
         pages: response.pages,
         total: response.total,
       }));
+    } catch (error) {
+      console.error('Failed to fetch expenses:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const refreshAnalytics = async (): Promise<void> => {
-    const [analyticsResponse, aiResponse] = await Promise.all([getAnalytics(scope), getAiInsights()]);
-    setAnalytics(analyticsResponse);
-    setAiInsight(aiResponse.insight);
-    setLastRefreshedAt(new Date().toISOString());
+    if (!user) return;
+    try {
+      const analyticsResponse = await getAnalytics(scope);
+      setAnalytics(analyticsResponse);
+      setLastRefreshedAt(new Date().toISOString());
+
+      // Fetch AI insight non-blockingly so the dashboard metrics render immediately
+      getAiInsights()
+        .then((aiResponse) => setAiInsight(aiResponse.insight))
+        .catch(() => setAiInsight(null));
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error);
+    }
   };
 
   const refreshAll = async (): Promise<void> => {
+    if (!user) return;
     await Promise.all([refreshExpenses(), refreshAnalytics()]);
   };
 
   useEffect(() => {
-    void refreshExpenses();
-    void refreshAnalytics();
-  }, [filters, pagination.page, pagination.limit, scope]);
+    if (user) {
+      void refreshExpenses();
+      void refreshAnalytics();
+    } else {
+      setExpenses([]);
+      setAnalytics(null);
+      setAiInsight(null);
+    }
+  }, [user?._id, filters, pagination.page, pagination.limit, scope]);
 
   const setFilters = (nextFilters: ExpenseFilters): void => {
     setPagination((current: PaginationState) => ({ ...current, page: 1 }));
