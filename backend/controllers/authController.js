@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const generateToken = require('../utils/generateToken');
+const { generateToken, getCookieOptions } = require('../utils/generateToken');
 
 const sanitizeUser = (user) => ({
   _id: user._id,
@@ -37,8 +37,8 @@ const registerUser = asyncHandler(async (req, res) => {
     role: 'member',
   });
 
-  generateToken(res, user._id);
-  res.status(201).json(sanitizeUser(user));
+  const token = generateToken(res, user._id, req);
+  res.status(201).json({ ...sanitizeUser(user), token });
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -62,17 +62,15 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid email or password');
   }
 
-  generateToken(res, user._id);
-  res.json(sanitizeUser(user));
+  const token = generateToken(res, user._id, req);
+  res.json({ ...sanitizeUser(user), token });
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
+  const options = getCookieOptions(req);
   res.cookie('token', '', {
-    httpOnly: true,
+    ...options,
     expires: new Date(0),
-    path: '/',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    secure: process.env.NODE_ENV === 'production',
   });
 
   res.json({ message: 'Logged out successfully' });

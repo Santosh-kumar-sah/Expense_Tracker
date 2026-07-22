@@ -27,6 +27,14 @@ const api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('expenseiq_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ message?: string }>) => {
@@ -36,16 +44,23 @@ api.interceptors.response.use(
 );
 
 export const register = async (payload: RegisterPayload): Promise<AuthResponse> => {
-  const response = await api.post<MeResponse>('/auth/register', payload);
+  const response = await api.post<MeResponse & { token?: string }>('/auth/register', payload);
+  if (response.data.token) {
+    localStorage.setItem('expenseiq_token', response.data.token);
+  }
   return { user: response.data };
 };
 
 export const login = async (payload: LoginPayload): Promise<AuthResponse> => {
-  const response = await api.post<MeResponse>('/auth/login', payload);
+  const response = await api.post<MeResponse & { token?: string }>('/auth/login', payload);
+  if (response.data.token) {
+    localStorage.setItem('expenseiq_token', response.data.token);
+  }
   return { user: response.data };
 };
 
 export const logout = async (): Promise<ApiResponse<null>> => {
+  localStorage.removeItem('expenseiq_token');
   const response = await api.post<ApiResponse<null>>('/auth/logout');
   return response.data;
 };

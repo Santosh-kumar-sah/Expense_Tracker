@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-const getCookieOptions = () => {
-  const isProduction = process.env.NODE_ENV === 'production';
+const getCookieOptions = (req = null) => {
+  const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    Boolean(process.env.CLIENT_URL && process.env.CLIENT_URL.startsWith('https://')) ||
+    Boolean(req && (req.secure || req.headers['x-forwarded-proto'] === 'https'));
 
   return {
     httpOnly: true,
@@ -12,13 +15,13 @@ const getCookieOptions = () => {
   };
 };
 
-const generateToken = (res, userId) => {
+const generateToken = (res, userId, req = null) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
 
-  res.cookie('token', token, getCookieOptions());
+  res.cookie('token', token, getCookieOptions(req));
   return token;
 };
 
-module.exports = generateToken;
+module.exports = { generateToken, getCookieOptions };
