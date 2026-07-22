@@ -38,6 +38,17 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ message?: string }>) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('expenseiq_token');
+      if (
+        typeof window !== 'undefined' &&
+        !window.location.pathname.startsWith('/login') &&
+        !window.location.pathname.startsWith('/signup') &&
+        window.location.pathname !== '/'
+      ) {
+        window.location.href = '/login';
+      }
+    }
     const normalizedMessage = error.response?.data?.message ?? error.message ?? 'Unexpected error';
     return Promise.reject(new Error(normalizedMessage));
   }

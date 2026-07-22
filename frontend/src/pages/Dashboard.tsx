@@ -1,11 +1,9 @@
 import { ArrowRight, BadgeDollarSign, CalendarDays, PieChart as PieChartIcon, RefreshCw, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useExpense } from '../context/ExpenseContext';
 import { CategoryPieChart } from '../components/charts/CategoryPieChart';
 import { MonthlyBarChart } from '../components/charts/MonthlyBarChart';
 import { StatCard } from '../components/StatCard';
-import { Loader } from '../components/Loader';
 import { LiquidBlobLoader } from '../components/LiquidBlobLoader';
 import { CategoryBadge } from '../components/CategoryBadge';
 import { useMemo } from 'react';
@@ -24,11 +22,32 @@ const item = {
 };
 
 export const Dashboard = (): JSX.Element => {
-  const { user } = useAuth();
   const { analytics, aiInsight, loading, refreshAnalytics, scope } = useExpense();
 
-  if (loading || !analytics || !user) {
-    return <Loader label="Loading dashboard" className="min-h-[60vh]" />;
+  if (!analytics) {
+    return (
+      <div className="space-y-6 p-2">
+        <div className="flex items-center justify-between">
+          <div className="h-8 w-48 rounded-xl bg-slate-200/50 dark:bg-slate-800/50 animate-pulse" />
+          <button
+            type="button"
+            onClick={() => void refreshAnalytics()}
+            className="inline-flex items-center gap-2 rounded-xl glass-panel px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200"
+          >
+            <RefreshCw className="h-4 w-4 animate-spin" /> Retry Loading
+          </button>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 rounded-3xl glass-panel bg-slate-200/40 dark:bg-slate-800/40 animate-pulse" />
+          ))}
+        </div>
+        <div className="grid gap-6 xl:grid-cols-2">
+          <div className="h-72 rounded-3xl glass-panel bg-slate-200/40 dark:bg-slate-800/40 animate-pulse" />
+          <div className="h-72 rounded-3xl glass-panel bg-slate-200/40 dark:bg-slate-800/40 animate-pulse" />
+        </div>
+      </div>
+    );
   }
 
   const budgetStatus = analytics.budgetStatus;
