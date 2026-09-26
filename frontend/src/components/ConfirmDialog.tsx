@@ -25,20 +25,20 @@ export const ConfirmDialog = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-50 flex items-center justify-center px-4"
-        style={{ background: 'rgba(2, 6, 23, 0.65)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+        style={{ background: 'rgba(2, 6, 23, 0.70)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
         onClick={onCancel}
       >
         <motion.div
           key="confirm-panel"
-          initial={{ opacity: 0, scale: 0.94, rotateX: 8, y: 10, transformPerspective: 800 }}
+          initial={{ opacity: 0, scale: 0.94, rotateX: 6, y: 10, transformPerspective: 800 }}
           animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 8 }}
-          transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-          className="glass-panel-lg w-full max-w-md rounded-3xl p-6"
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="glass-panel-lg w-full max-w-md rounded-3xl p-6 my-auto max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{message}</p>
           <div className="mt-6 flex justify-end gap-3">
             <button
